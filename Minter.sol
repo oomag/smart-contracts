@@ -36,11 +36,6 @@ contract Minter {
         uint256 endTime;
         uint256 tokensMinimumNumberForBuy;
         uint256 tokensCost;
-/*
-        uint256 tokensScale;
-        uint256 tokensDecimalsCost;
-        uint256 tokensDecimalsScale;
-*/
     }
 
     address public owner;
@@ -131,26 +126,7 @@ contract Minter {
     }
 
     function setPreICOTokensCost(uint256 tokensCost) public onlyOwner {
-/*
-        uint256 tokensGranularity;
-
-        for(uint8 decimals = token.decimals(); decimals > 0; decimals--) {
-            tokensGranularity = 10 ** uint256(decimals);
-
-            if(tokensCost > tokensGranularity) {
-                break;
-            }
-        }
-
-        uint256 tokensScale = 10 ** uint256(token.decimals());
-*/
-
         PreICO.tokensCost = tokensCost;
-/*
-        PreICO.tokensScale = tokensScale;
-        PreICO.tokensDecimalsCost = tokensCost.div(tokensGranularity);
-        PreICO.tokensDecimalsScale = tokensScale.div(tokensGranularity);
-*/
     }
 
     function transferRestTokensToOwner() public onlyOwner
@@ -160,20 +136,7 @@ contract Minter {
 
     function () public payable onlyDuringTokensale onlyNotPaused onlyWhiteList
                 checkLimitsToBuyTokens {
-        uint256 tokensNumber;
-
-/*
-        if(msg.value >= PreICO.tokensCost) {
-            tokensNumber =
-                msg.value.mul(PreICO.tokensScale).div(PreICO.tokensCost);
-        } else {
-            tokensNumber =
-                msg.value.mul(PreICO.tokensDecimalsScale)
-                         .div(PreICO.tokensDecimalsCost);
-        }
-*/
-
-        tokensNumber = tokensNumberForBuy();
+        uint256 tokensNumber = tokensNumberForBuy();
 
         uint256 aviableTokensNumber =
             token.balanceOf(token).min(token.allowance(token, this));
