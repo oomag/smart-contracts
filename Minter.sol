@@ -82,19 +82,19 @@ contract Minter {
 
     modifier checkLimitsToBuyTokens {
         require(PreICO.tokensMinimumNumberForBuy <=
-                tokensNumberForBuy().div(10 ** uint256(token.decimals()));
+                tokensNumberForBuy().div(10 ** uint256(token.decimals())));
 
         _;
     }
 
     function Minter(address _manager, SimpleToken _token,
-                    uint256 PreICOStartTime, uint256 _PreICOEndTime,
+                    uint256 PreICOStartTime, uint256 PreICOEndTime,
                     uint256 PreICOTokensMinimumNumberForBuy) public {
         owner = msg.sender;
         manager = _manager;
         token = _token;
         PreICO.startTime = PreICOStartTime;
-        PreICO.endTime = PreICOendTime;
+        PreICO.endTime = PreICOEndTime;
         PreICO.tokensMinimumNumberForBuy = PreICOTokensMinimumNumberForBuy;
     }
 
