@@ -20,14 +20,14 @@ pragma solidity ^0.4.18;
 
 import {SafeMath} from "./SafeMath.sol";
 
-import {SimpleToken} from "./SimpleToken.sol";
+import {ABXToken} from "./ABXToken.sol";
 
 contract Minter {
     using SafeMath for uint256;
 
     enum MinterState {
-        PreICOWait,
-        PreICOStarted,
+        tokenSaleWait,
+        tokenSaleStarted,
         Over
     }
 
@@ -46,9 +46,9 @@ contract Minter {
 
     mapping(address => bool) public whiteList;
 
-    SimpleToken public token;
+    ABXToken public token;
 
-    Tokensale public PreICO;
+    Tokensale public tokenSale;
 
     modifier onlyOwner {
         require(owner == msg.sender);
@@ -63,7 +63,7 @@ contract Minter {
     }
 
     modifier onlyDuringTokensale {
-        require(minterState() == MinterState.PreICOStarted);
+        require(minterState() == MinterState.tokenSaleStarted);
 
         _;
     }
@@ -81,21 +81,22 @@ contract Minter {
     }
 
     modifier checkLimitsToBuyTokens {
-        require(PreICO.tokensMinimumNumberForBuy <=
+        require(tokenSale.tokensMinimumNumberForBuy <=
                 tokensNumberForBuy().div(10 ** uint256(token.decimals())));
 
         _;
     }
 
-    function Minter(address _manager, SimpleToken _token,
-                    uint256 PreICOStartTime, uint256 PreICOEndTime,
-                    uint256 PreICOTokensMinimumNumberForBuy) public {
+    function Minter(address _manager, ABXToken _token,
+                    uint256 tokenSaleStartTime, uint256 tokenSaleEndTime,
+                    uint256 tokenSaleTokensMinimumNumberForBuy) public {
         owner = msg.sender;
         manager = _manager;
         token = _token;
-        PreICO.startTime = PreICOStartTime;
-        PreICO.endTime = PreICOEndTime;
-        PreICO.tokensMinimumNumberForBuy = PreICOTokensMinimumNumberForBuy;
+        tokenSale.startTime = tokenSaleStartTime;
+        tokenSale.endTime = tokenSaleEndTime;
+        tokenSale.tokensMinimumNumberForBuy =
+            tokenSaleTokensMinimumNumberForBuy;
     }
 
     function setOwner(address _owner) public onlyOwner {
@@ -118,21 +119,21 @@ contract Minter {
         whiteList[tokensHolder] = false;
     }
 
-    function setPreICOStartTime(uint256 timestamp) public onlyOwner {
-        PreICO.startTime = timestamp;
+    function setTokenSaleStartTime(uint256 timestamp) public onlyOwner {
+        tokenSale.startTime = timestamp;
     }
 
-    function setPreICOEndTime(uint256 timestamp) public onlyOwner {
-        PreICO.endTime = timestamp;
+    function setTokenSaleEndTime(uint256 timestamp) public onlyOwner {
+        tokenSale.endTime = timestamp;
     }
 
-    function setPreICOTokensMinimumNumberForBuy(uint256 tokensNumber) public
+    function setTokenSaleTokensMinimumNumberForBuy(uint256 tokensNumber) public
                                                onlyOwner {
-        PreICO.tokensMinimumNumberForBuy = tokensNumber;
+        tokenSale.tokensMinimumNumberForBuy = tokensNumber;
     }
 
-    function setPreICOTokensCost(uint256 tokensCost) public onlyOwner {
-        PreICO.tokensCost = tokensCost;
+    function setTokenSaleTokensCost(uint256 tokensCost) public onlyOwner {
+        tokenSale.tokensCost = tokensCost;
     }
 
     function transferRestTokensToOwner() public onlyOwner
@@ -153,7 +154,7 @@ contract Minter {
             uint256 restTokensNumber = tokensNumber.sub(aviableTokensNumber);
 
             restCoins =
-                restTokensNumber.mul(PreICO.tokensCost)
+                restTokensNumber.mul(tokenSale.tokensCost)
                                 .div(10 ** uint256(token.decimals()));
 
             tokensNumber = aviableTokensNumber;
@@ -167,10 +168,10 @@ contract Minter {
     }
 
     function minterState() private constant returns(MinterState) {
-        if(PreICO.startTime > now) {
-            return MinterState.PreICOWait;
-        } else if(PreICO.endTime > now) {
-            return MinterState.PreICOStarted;
+        if(tokenSale.startTime > now) {
+            return MinterState.tokenSaleWait;
+        } else if(tokenSale.endTime > now) {
+            return MinterState.tokenSaleStarted;
         } else {
             return MinterState.Over;
         }
@@ -178,6 +179,6 @@ contract Minter {
 
     function tokensNumberForBuy() private constant returns(uint256) {
         return msg.value.mul(10 ** uint256(token.decimals()))
-                        .div(PreICO.tokensCost);
+                        .div(tokenSale.tokensCost);
     }
 }
