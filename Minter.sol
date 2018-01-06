@@ -86,7 +86,8 @@ contract Minter {
     }
 
     modifier checkLimitsToBuyTokens {
-        require(PreICO.tokensMinimumNumberForBuy <= tokensNumberForBuy());
+        require(PreICO.tokensMinimumNumberForBuy <=
+                tokensNumberForBuy().div(10 ** uint256(token.decimals()));
 
         _;
     }
@@ -184,7 +185,7 @@ contract Minter {
 
             restCoins =
                 restTokensNumber.mul(PreICO.tokensCost)
-                                .div(10 ** token.decimals());
+                                .div(10 ** uint256(token.decimals()));
 
             tokensNumber = aviableTokensNumber;
         }
@@ -207,6 +208,7 @@ contract Minter {
     }
 
     function tokensNumberForBuy() private constant returns(uint256) {
-        return msg.value.mul(10 ** token.decimals()).div(PreICO.tokensCost);
+        return msg.value.mul(10 ** uint256(token.decimals()))
+                        .div(PreICO.tokensCost);
     }
 }
