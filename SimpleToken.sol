@@ -86,11 +86,11 @@ contract SimpleToken {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-        totalSupply = _totalSupply;
+        totalSupply = _totalSupply.mul(10 ** uint256(decimals));
 
         require(decimals <= 77);
 
-        balanceOf[this] = totalSupply.mul(10 ** uint256(decimals));
+        balanceOf[this] = totalSupply;
     }
 
     function setOwner(address _owner) public onlyOwner returns(bool) {
