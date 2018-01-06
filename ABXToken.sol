@@ -20,14 +20,12 @@ pragma solidity ^0.4.18;
 
 import {SafeMath} from "./SafeMath.sol";
 
-import {Minter} from "./Minter.sol";
-
 contract ABXToken {
     using SafeMath for uint256;
 
     address public owner;
 
-    Minter public minter;
+    address public minter;
 
     string public name;
 
@@ -99,7 +97,7 @@ contract ABXToken {
         return true;
     }
 
-    function setMinter(Minter _minter) public onlyOwner returns(bool) {
+    function setMinter(address _minter) public onlyOwner returns(bool) {
         safeApprove(this, minter, 0);
 
         minter = _minter;
