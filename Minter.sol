@@ -87,9 +87,15 @@ contract Minter {
         _;
     }
 
-    function Minter(SimpleToken _token) public {
+    function Minter(address _manager, SimpleToken _token,
+                    uint256 PreICOStartTime, uint256 _PreICOEndTime,
+                    uint256 PreICOTokensMinimumNumberForBuy) public {
         owner = msg.sender;
+        manager = _manager;
         token = _token;
+        PreICO.startTime = PreICOStartTime;
+        PreICO.endTime = PreICOendTime;
+        PreICO.tokensMinimumNumberForBuy = PreICOTokensMinimumNumberForBuy;
     }
 
     function setOwner(address _owner) public onlyOwner {
