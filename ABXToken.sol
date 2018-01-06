@@ -78,8 +78,8 @@ contract ABXToken {
         _;
     }
 
-    function SimpleToken(string _name, string _symbol, uint8 _decimals,
-                         uint256 _totalSupply) public {
+    function ABXToken(string _name, string _symbol, uint8 _decimals,
+                      uint256 _totalSupply) public {
         owner = msg.sender;
         name = _name;
         symbol = _symbol;
