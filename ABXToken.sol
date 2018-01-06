@@ -22,7 +22,7 @@ import {SafeMath} from "./SafeMath.sol";
 
 import {Minter} from "./Minter.sol";
 
-contract SimpleToken {
+contract ABXToken {
     using SafeMath for uint256;
 
     address public owner;
